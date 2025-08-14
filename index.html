@@ -43,13 +43,16 @@
     <!-- Main container for the entire resume layout -->
     <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-6 md:p-10 lg:p-16">
         
-        <!-- Header with Name and Contact Information -->
-        <header class="flex flex-col md:flex-row justify-between items-center border-b-4 border-gray-300 pb-6 mb-6">
-            <!-- Name -->
-            <h1 contenteditable="true" id="your-name" class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight">Your Name</h1>
+        <!-- Header with Name, Picture and Contact Information -->
+        <header class="flex flex-col md:flex-row justify-between items-start border-b-4 border-gray-300 pb-6 mb-6">
+            <!-- Left side: Image and Name -->
+            <div class="flex items-center mb-4 md:mb-0">
+                <img id="profile-picture" src="https://placehold.co/120x120/A0A0A0/FFFFFF?text=Photo" alt="Profile Picture" class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover mr-6 border-4 border-blue-500 cursor-pointer hover:shadow-lg transition-shadow" onclick="changePicture()">
+                <h1 contenteditable="true" id="your-name" class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight">Your Name</h1>
+            </div>
             
-            <!-- Contact details -->
-            <div class="mt-4 md:mt-0 text-gray-600 text-right">
+            <!-- Right side: Contact details -->
+            <div class="text-gray-600 text-left md:text-right w-full md:w-auto">
                 <p contenteditable="true" class="text-lg">Address, City, State, Zip</p>
                 <p contenteditable="true" class="text-lg">Phone: (123) 456-7890</p>
                 <p contenteditable="true" class="text-lg">Email: your.email@example.com</p>
@@ -160,6 +163,20 @@
             // This triggers the browser's print dialog, which can save the page as a PDF
             window.print();
         });
+
+        // Function to change the profile picture
+        function changePicture() {
+            const newImageUrl = prompt("Please enter the URL for your new profile picture:");
+            const profilePictureElement = document.getElementById('profile-picture');
+            if (newImageUrl) {
+                profilePictureElement.src = newImageUrl;
+                profilePictureElement.onerror = () => {
+                    showMessage('Invalid image URL. Reverting to placeholder.', 'error');
+                    profilePictureElement.src = "https://placehold.co/120x120/A0A0A0/FFFFFF?text=Photo";
+                };
+                showMessage('Profile picture updated successfully!', 'success');
+            }
+        }
 
         // Get the AI generation button and other elements
         const generateBtn = document.getElementById('generate-summary-btn');
