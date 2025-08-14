@@ -18,9 +18,27 @@
         [contenteditable="true"]:focus {
             border-bottom: 1px dashed #6b7280; /* A subtle focus border */
         }
+        /* Custom message box for alerts */
+        #message-box {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8 lg:p-12">
+
+    <!-- Message box for alerts -->
+    <div id="message-box" class="hidden max-w-sm w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-md" role="alert">
+      <div class="flex justify-between items-center">
+        <strong id="message-text" class="font-bold"></strong>
+        <span class="block sm:inline cursor-pointer text-red-700 hover:text-red-900" onclick="document.getElementById('message-box').classList.add('hidden')">
+          <svg class="fill-current h-6 w-6" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.848l-2.651 3.001a1.2 1.2 0 1 1-1.7-1.697l3.001-2.651-3.001-2.651a1.2 1.2 0 0 1 1.697-1.697l2.651 3.001 2.651-3.001a1.2 1.2 0 0 1 1.697 1.697l-3.001 2.651 3.001 2.651a1.2 1.2 0 0 1 0 1.697z"/></svg>
+        </span>
+      </div>
+    </div>
 
     <!-- Main container for the entire resume layout -->
     <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-6 md:p-10 lg:p-16">
@@ -59,6 +77,11 @@
                     <div id="loading-indicator" class="hidden mt-2 text-center text-gray-500">
                         Generating...
                     </div>
+                </div>
+
+                <!-- Generated Summary Options -->
+                <div id="summary-options-container" class="space-y-4">
+                    <!-- Options will be dynamically inserted here -->
                 </div>
 
                 <!-- Skills Section -->
@@ -142,11 +165,25 @@
         const generateBtn = document.getElementById('generate-summary-btn');
         const summaryText = document.getElementById('professional-summary');
         const loadingIndicator = document.getElementById('loading-indicator');
+        const summaryOptionsContainer = document.getElementById('summary-options-container');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+
+        // Function to show a custom message
+        const showMessage = (text, type = 'error') => {
+            messageText.innerText = text;
+            messageBox.classList.remove('hidden', 'bg-red-100', 'border-red-400', 'text-red-700', 'bg-green-100', 'border-green-400', 'text-green-700');
+            if (type === 'error') {
+                 messageBox.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+            } else {
+                 messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
+            }
+        };
 
         // Event listener for the AI button
         generateBtn.addEventListener('click', async () => {
             // Prompt the user for a description of their experience
-            const experience = prompt("Please describe your work experience and key skills in a few sentences to generate a summary:");
+            const experience = prompt("Please describe your work experience and key skills in a few sentences to generate summary options:");
 
             // Check if the user provided input
             if (experience && experience.trim() !== '') {
@@ -154,46 +191,87 @@
                 loadingIndicator.classList.remove('hidden');
                 generateBtn.disabled = true;
 
-                // Construct a prompt for the AI
-                const prompt = `Based on the following experience, write a professional summary for a resume. It should be concise (2-3 sentences), use strong action verbs, and highlight key achievements and skills. Do not use your name, use the placeholder "Your Name".\n\nExperience: ${experience}`;
+                // Construct a prompt for the AI to generate a JSON array of summaries
+                const prompt = `Based on the following experience, write 3 distinct professional summaries for a resume. Each summary should be a concise paragraph (2-3 sentences), use strong action verbs, and highlight key achievements and skills. The tone for each should be slightly different (e.g., one focusing on leadership, one on technical skills, one on problem-solving). Do not use a specific name, use the placeholder "Your Name". Return the response as a JSON array of strings, where each string is a summary.`;
 
                 try {
-                    // Make the API call to the Gemini model
-                    let chatHistory = [];
-                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                    const payload = { contents: chatHistory };
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                    // Use a retry mechanism with exponential backoff for the API call
+                    let response;
+                    let result;
+                    let retries = 0;
+                    const maxRetries = 5;
+                    const delay = 1000;
 
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                    while (retries < maxRetries) {
+                         let chatHistory = [];
+                         chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                         const payload = {
+                             contents: chatHistory,
+                             generationConfig: {
+                                 responseMimeType: "application/json",
+                                 responseSchema: {
+                                     type: "ARRAY",
+                                     items: { "type": "STRING" }
+                                 }
+                             }
+                         };
+                         const apiKey = "";
+                         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
-                    // Handle API response
-                    const result = await response.json();
+                         response = await fetch(apiUrl, {
+                             method: 'POST',
+                             headers: { 'Content-Type': 'application/json' },
+                             body: JSON.stringify(payload)
+                         });
+                         result = await response.json();
+
+                         if (response.ok && result.candidates && result.candidates.length > 0) {
+                              break;
+                         }
+                         retries++;
+                         await new Promise(res => setTimeout(res, delay * Math.pow(2, retries)));
+                    }
+                    
                     if (result.candidates && result.candidates.length > 0 &&
                         result.candidates[0].content && result.candidates[0].content.parts &&
                         result.candidates[0].content.parts.length > 0) {
-                        const generatedText = result.candidates[0].content.parts[0].text;
-                        // Replace the content of the summary paragraph with the generated text
-                        summaryText.innerText = generatedText.trim();
+                        const jsonString = result.candidates[0].content.parts[0].text;
+                        const summaries = JSON.parse(jsonString);
+
+                        // Clear previous options
+                        summaryOptionsContainer.innerHTML = '';
+                        // Add a message to the user
+                        summaryOptionsContainer.innerHTML = '<p class="text-gray-500 text-sm italic mb-2">Choose and edit one of the following summaries:</p>';
+
+                        // Create and append a div for each generated summary
+                        summaries.forEach((summary, index) => {
+                            const summaryDiv = document.createElement('div');
+                            summaryDiv.classList.add('p-4', 'bg-gray-100', 'rounded-lg', 'shadow-sm', 'border', 'border-gray-200', 'hover:bg-gray-200', 'cursor-pointer', 'transition-colors', 'duration-200');
+                            summaryDiv.setAttribute('contenteditable', 'true');
+                            summaryDiv.innerText = summary.trim();
+                            summaryOptionsContainer.appendChild(summaryDiv);
+
+                            // Add a click event listener to select the summary and put it in the main area
+                            summaryDiv.addEventListener('click', () => {
+                                summaryText.innerText = summaryDiv.innerText;
+                                showMessage('Summary updated successfully!', 'success');
+                            });
+                        });
+                        
                     } else {
-                        // Display an error message if the response is unexpected
-                        summaryText.innerText = "Error generating summary. Please try again.";
+                        showMessage("Error generating summary. Please try again.");
                     }
                 } catch (error) {
                     console.error('Error fetching from Gemini API:', error);
                     // Display a user-friendly error message
-                    summaryText.innerText = "An error occurred. Please check your network connection and try again.";
+                    showMessage("An error occurred. Please check your network connection and try again.");
                 } finally {
                     // Hide loading indicator and re-enable the button
                     loadingIndicator.classList.add('hidden');
                     generateBtn.disabled = false;
                 }
             } else {
-                alert("Please provide a description to generate a summary.");
+                showMessage("Please provide a description to generate a summary.");
             }
         });
     </script>
