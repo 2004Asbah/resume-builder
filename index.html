@@ -77,7 +77,7 @@
                         Generate Summary with AI
                     </button>
                     <!-- Loading indicator -->
-                    <div id="loading-indicator" class="hidden mt-2 text-center text-gray-500">
+                    <div id="loading-indicator-summary" class="hidden mt-2 text-center text-gray-500">
                         Generating...
                     </div>
                 </div>
@@ -113,11 +113,17 @@
                             <span contenteditable="true" class="text-gray-600 text-base">Start Date – End Date</span>
                         </div>
                         <p contenteditable="true" class="text-gray-700 italic mb-2">City, State</p>
-                        <ul contenteditable="true" class="list-disc list-outside space-y-2 text-gray-700 text-lg pl-6">
+                        <ul contenteditable="true" id="job-bullets-1" class="list-disc list-outside space-y-2 text-gray-700 text-lg pl-6">
                             <li>Accomplishment 1: Describe a key achievement or responsibility using action verbs.</li>
                             <li>Accomplishment 2: Quantify your results whenever possible (e.g., "Increased sales by 15%").</li>
                             <li>Accomplishment 3: Detail your contributions to team projects or company goals.</li>
                         </ul>
+                        <button class="mt-2 text-sm text-blue-500 hover:text-blue-700 font-semibold" onclick="generateBulletPointsWithAI('job-bullets-1')">
+                            Generate Bullet Points with AI
+                        </button>
+                        <div id="loading-indicator-job-1" class="hidden mt-1 text-xs text-gray-500">
+                            Generating...
+                        </div>
                     </div>
 
                     <!-- Job 2 -->
@@ -127,11 +133,17 @@
                             <span contenteditable="true" class="text-gray-600 text-base">Start Date – End Date</span>
                         </div>
                         <p contenteditable="true" class="text-gray-700 italic mb-2">City, State</p>
-                        <ul contenteditable="true" class="list-disc list-outside space-y-2 text-gray-700 text-lg pl-6">
+                        <ul contenteditable="true" id="job-bullets-2" class="list-disc list-outside space-y-2 text-gray-700 text-lg pl-6">
                             <li>Accomplishment 1: Describe a key achievement or responsibility using action verbs.</li>
                             <li>Accomplishment 2: Quantify your results whenever possible (e.g., "Increased sales by 15%").</li>
                             <li>Accomplishment 3: Detail your contributions to team projects or company goals.</li>
                         </ul>
+                        <button class="mt-2 text-sm text-blue-500 hover:text-blue-700 font-semibold" onclick="generateBulletPointsWithAI('job-bullets-2')">
+                            Generate Bullet Points with AI
+                        </button>
+                        <div id="loading-indicator-job-2" class="hidden mt-1 text-xs text-gray-500">
+                            Generating...
+                        </div>
                     </div>
                 </div>
 
@@ -179,9 +191,9 @@
         }
 
         // Get the AI generation button and other elements
-        const generateBtn = document.getElementById('generate-summary-btn');
+        const generateSummaryBtn = document.getElementById('generate-summary-btn');
         const summaryText = document.getElementById('professional-summary');
-        const loadingIndicator = document.getElementById('loading-indicator');
+        const loadingIndicatorSummary = document.getElementById('loading-indicator-summary');
         const summaryOptionsContainer = document.getElementById('summary-options-container');
         const messageBox = document.getElementById('message-box');
         const messageText = document.getElementById('message-text');
@@ -195,18 +207,21 @@
             } else {
                  messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
             }
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 5000);
         };
 
-        // Event listener for the AI button
-        generateBtn.addEventListener('click', async () => {
+        // Event listener for the AI summary button
+        generateSummaryBtn.addEventListener('click', async () => {
             // Prompt the user for a description of their experience
             const experience = prompt("Please describe your work experience and key skills in a few sentences to generate summary options:");
 
             // Check if the user provided input
             if (experience && experience.trim() !== '') {
                 // Show loading indicator and disable the button
-                loadingIndicator.classList.remove('hidden');
-                generateBtn.disabled = true;
+                loadingIndicatorSummary.classList.remove('hidden');
+                generateSummaryBtn.disabled = true;
 
                 // Construct a prompt for the AI to generate a JSON array of summaries
                 const prompt = `Based on the following experience, write 3 distinct professional summaries for a resume. Each summary should be a concise paragraph (2-3 sentences), use strong action verbs, and highlight key achievements and skills. The tone for each should be slightly different (e.g., one focusing on leadership, one on technical skills, one on problem-solving). Do not use a specific name, use the placeholder "Your Name". Return the response as a JSON array of strings, where each string is a summary.`;
@@ -261,7 +276,7 @@
                         summaryOptionsContainer.innerHTML = '<p class="text-gray-500 text-sm italic mb-2">Choose and edit one of the following summaries:</p>';
 
                         // Create and append a div for each generated summary
-                        summaries.forEach((summary, index) => {
+                        summaries.forEach((summary) => {
                             const summaryDiv = document.createElement('div');
                             summaryDiv.classList.add('p-4', 'bg-gray-100', 'rounded-lg', 'shadow-sm', 'border', 'border-gray-200', 'hover:bg-gray-200', 'cursor-pointer', 'transition-colors', 'duration-200');
                             summaryDiv.setAttribute('contenteditable', 'true');
@@ -284,13 +299,89 @@
                     showMessage("An error occurred. Please check your network connection and try again.");
                 } finally {
                     // Hide loading indicator and re-enable the button
-                    loadingIndicator.classList.add('hidden');
-                    generateBtn.disabled = false;
+                    loadingIndicatorSummary.classList.add('hidden');
+                    generateSummaryBtn.disabled = false;
                 }
             } else {
                 showMessage("Please provide a description to generate a summary.");
             }
         });
+
+        // Function for generating bullet points
+        async function generateBulletPointsWithAI(ulId) {
+            const ulElement = document.getElementById(ulId);
+            const loadingIndicator = document.getElementById('loading-indicator-' + ulId.slice(-1));
+
+            const jobDescription = prompt("Please describe the job title, company, and your responsibilities to generate bullet points:");
+
+            if (jobDescription && jobDescription.trim() !== '') {
+                loadingIndicator.classList.remove('hidden');
+                ulElement.innerHTML = ''; // Clear existing bullets
+
+                const prompt = `Based on the following job description, generate 3-4 professional bullet points for a resume. Each bullet point should start with a strong action verb, quantify achievements where possible, and highlight key responsibilities. Return the response as a JSON array of strings, where each string is a bullet point.\n\nJob Description: ${jobDescription}`;
+
+                try {
+                    let response;
+                    let result;
+                    let retries = 0;
+                    const maxRetries = 5;
+                    const delay = 1000;
+
+                    while (retries < maxRetries) {
+                         let chatHistory = [];
+                         chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                         const payload = {
+                             contents: chatHistory,
+                             generationConfig: {
+                                 responseMimeType: "application/json",
+                                 responseSchema: {
+                                     type: "ARRAY",
+                                     items: { "type": "STRING" }
+                                 }
+                             }
+                         };
+                         const apiKey = "";
+                         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                         response = await fetch(apiUrl, {
+                             method: 'POST',
+                             headers: { 'Content-Type': 'application/json' },
+                             body: JSON.stringify(payload)
+                         });
+                         result = await response.json();
+
+                         if (response.ok && result.candidates && result.candidates.length > 0) {
+                              break;
+                         }
+                         retries++;
+                         await new Promise(res => setTimeout(res, delay * Math.pow(2, retries)));
+                    }
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const jsonString = result.candidates[0].content.parts[0].text;
+                        const bullets = JSON.parse(jsonString);
+
+                        bullets.forEach(bullet => {
+                            const li = document.createElement('li');
+                            li.innerText = bullet.trim();
+                            ulElement.appendChild(li);
+                        });
+                        showMessage('Bullet points generated successfully!', 'success');
+                    } else {
+                        showMessage("Error generating bullet points. Please try again.");
+                    }
+                } catch (error) {
+                    console.error('Error fetching from Gemini API:', error);
+                    showMessage("An error occurred. Please check your network connection and try again.");
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                }
+            } else {
+                showMessage("Please provide a job description to generate bullet points.");
+            }
+        }
     </script>
 </body>
 </html>
