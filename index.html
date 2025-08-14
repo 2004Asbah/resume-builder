@@ -28,7 +28,7 @@
         <!-- Header with Name and Contact Information -->
         <header class="flex flex-col md:flex-row justify-between items-center border-b-4 border-gray-300 pb-6 mb-6">
             <!-- Name -->
-            <h1 contenteditable="true" class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight">Your Name</h1>
+            <h1 contenteditable="true" id="your-name" class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight">Your Name</h1>
             
             <!-- Contact details -->
             <div class="mt-4 md:mt-0 text-gray-600 text-right">
@@ -48,9 +48,17 @@
                 <!-- Professional Summary/Objective -->
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Professional Summary</h2>
-                    <p contenteditable="true" class="text-gray-700 text-lg leading-relaxed">
+                    <p contenteditable="true" id="professional-summary" class="text-gray-700 text-lg leading-relaxed">
                         A concise paragraph that highlights your professional experience, skills, and career goals. Tailor this to the specific job you are applying for to make a strong first impression.
                     </p>
+                    <!-- Button to generate summary using AI -->
+                    <button id="generate-summary-btn" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
+                        Generate Summary with AI
+                    </button>
+                    <!-- Loading indicator -->
+                    <div id="loading-indicator" class="hidden mt-2 text-center text-gray-500">
+                        Generating...
+                    </div>
                 </div>
 
                 <!-- Skills Section -->
@@ -123,11 +131,70 @@
 
     </div>
 
-    <!-- JavaScript to handle the "Save as PDF" functionality -->
+    <!-- JavaScript to handle the "Save as PDF" and AI functionality -->
     <script>
         document.getElementById('printBtn').addEventListener('click', () => {
             // This triggers the browser's print dialog, which can save the page as a PDF
             window.print();
+        });
+
+        // Get the AI generation button and other elements
+        const generateBtn = document.getElementById('generate-summary-btn');
+        const summaryText = document.getElementById('professional-summary');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        // Event listener for the AI button
+        generateBtn.addEventListener('click', async () => {
+            // Prompt the user for a description of their experience
+            const experience = prompt("Please describe your work experience and key skills in a few sentences to generate a summary:");
+
+            // Check if the user provided input
+            if (experience && experience.trim() !== '') {
+                // Show loading indicator and disable the button
+                loadingIndicator.classList.remove('hidden');
+                generateBtn.disabled = true;
+
+                // Construct a prompt for the AI
+                const prompt = `Based on the following experience, write a professional summary for a resume. It should be concise (2-3 sentences), use strong action verbs, and highlight key achievements and skills. Do not use your name, use the placeholder "Your Name".\n\nExperience: ${experience}`;
+
+                try {
+                    // Make the API call to the Gemini model
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    // Handle API response
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const generatedText = result.candidates[0].content.parts[0].text;
+                        // Replace the content of the summary paragraph with the generated text
+                        summaryText.innerText = generatedText.trim();
+                    } else {
+                        // Display an error message if the response is unexpected
+                        summaryText.innerText = "Error generating summary. Please try again.";
+                    }
+                } catch (error) {
+                    console.error('Error fetching from Gemini API:', error);
+                    // Display a user-friendly error message
+                    summaryText.innerText = "An error occurred. Please check your network connection and try again.";
+                } finally {
+                    // Hide loading indicator and re-enable the button
+                    loadingIndicator.classList.add('hidden');
+                    generateBtn.disabled = false;
+                }
+            } else {
+                alert("Please provide a description to generate a summary.");
+            }
         });
     </script>
 </body>
