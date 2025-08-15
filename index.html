@@ -42,122 +42,142 @@
 
     <!-- Main container for the entire resume layout -->
     <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-6 md:p-10 lg:p-16">
-        
-        <!-- Header with Name, Picture and Contact Information -->
-        <header class="flex flex-col md:flex-row justify-between items-start border-b-4 border-gray-300 pb-6 mb-6">
-            <!-- Left side: Image and Name -->
-            <div class="flex items-center mb-4 md:mb-0">
-                <img id="profile-picture" src="https://placehold.co/120x120/A0A0A0/FFFFFF?text=Photo" alt="Profile Picture" class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover mr-6 border-4 border-blue-500 cursor-pointer hover:shadow-lg transition-shadow" onclick="changePicture()">
-                <h1 contenteditable="true" id="your-name" class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight">Your Name</h1>
-            </div>
-            
-            <!-- Right side: Contact details -->
-            <div class="text-gray-600 text-left md:text-right w-full md:w-auto">
-                <p contenteditable="true" class="text-lg">Address, City, State, Zip</p>
-                <p contenteditable="true" class="text-lg">Phone: (123) 456-7890</p>
-                <p contenteditable="true" class="text-lg">Email: your.email@example.com</p>
-                <p contenteditable="true" class="text-lg">LinkedIn: linkedin.com/in/yourname</p>
+
+        <!-- Header section with photo, name, and contact details -->
+        <header class="pb-6 mb-6">
+            <div class="flex flex-col md:flex-row items-center md:items-start justify-between">
+                <!-- Left side: Photo and Name -->
+                <div class="flex flex-col items-center md:items-start mb-4 md:mb-0">
+                    <img id="profile-picture" src="https://placehold.co/150x150/A0A0A0/FFFFFF?text=Photo" alt="Profile Picture" class="w-32 h-32 md:w-40 md:h-40 rounded-lg object-cover mb-4 md:mb-0 border-4 border-blue-500 cursor-pointer hover:shadow-lg transition-shadow" onclick="changePicture()">
+                    <h1 contenteditable="true" id="your-name" class="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight text-center md:text-left">Your Name</h1>
+                    <p contenteditable="true" class="text-lg text-gray-600 mt-2 text-center md:text-left">Aspiring software engineer</p>
+                </div>
+
+                <!-- Right side: Contact details -->
+                <div class="text-gray-600 text-center md:text-right">
+                    <p contenteditable="true" class="text-lg">Phone: 7618367986</p>
+                    <p contenteditable="true" class="text-lg">Email: your.email@example.com</p>
+                    <p contenteditable="true" class="text-lg">Address: Bareilly, Uttar Pradesh</p>
+                </div>
             </div>
         </header>
 
-        <!-- Main content of the resume -->
-        <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Main content of the resume with a single column layout -->
+        <main class="space-y-8">
             
-            <!-- Column 1: Summary, Skills, and Awards -->
-            <div class="md:col-span-1 space-y-8">
+            <!-- Career Objective/Summary -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Career Objective</h2>
+                <p contenteditable="true" id="professional-summary" class="text-gray-700 text-lg leading-relaxed">
+                    Aspiring software engineer with strong skills in MERN stack development, passionate about creating efficient and user-friendly applications. Dedicated to continuous learning and applying innovative solutions to real-world problems.
+                </p>
+                <!-- Button to generate summary using AI -->
+                <button id="generate-summary-btn" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
+                    Generate Summary with AI
+                </button>
+                <!-- Loading indicator -->
+                <div id="loading-indicator-summary" class="hidden mt-2 text-center text-gray-500">
+                    Generating...
+                </div>
+            </div>
+
+            <!-- Education Section -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Education</h2>
+                <div class="space-y-4">
+                    <p contenteditable="true" class="text-gray-700 text-lg font-bold">B.Tech in Computer Science & Engineering — <span class="font-normal italic">Shri Ram Murti Smarak College of Engineering and Technology, Bareilly (2022 – Present)</span></p>
+                    <p contenteditable="true" class="text-gray-700 text-lg font-bold">Higher Secondary & Senior Secondary Education — <span class="font-normal italic">Kendriya Vidyalaya NER, Bareilly</span></p>
+                </div>
+            </div>
+
+            <!-- Technical Skills Section -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Technical Skills</h2>
+                <ul contenteditable="true" class="list-disc list-inside space-y-2 text-gray-700 text-lg">
+                    <li>Python Programming</li>
+                    <li>Data Visualization (Power BI)</li>
+                    <li>Full Stack Development (MERN Stack)</li>
+                    <li>Web Development (HTML, CSS, JavaScript)</li>
+                    <li>MySQL Database Management</li>
+                </ul>
+            </div>
+
+            <!-- Projects Section -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Projects</h2>
                 
-                <!-- Professional Summary/Objective -->
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Professional Summary</h2>
-                    <p contenteditable="true" id="professional-summary" class="text-gray-700 text-lg leading-relaxed">
-                        A concise paragraph that highlights your professional experience, skills, and career goals. Tailor this to the specific job you are applying for to make a strong first impression.
-                    </p>
-                    <!-- Button to generate summary using AI -->
-                    <button id="generate-summary-btn" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out">
-                        Generate Summary with AI
+                <!-- Project 1 -->
+                <div class="mb-6">
+                    <h3 contenteditable="true" class="text-xl font-bold text-gray-800">E-Commerce Website (HTML, CSS, JavaScript, MySQL)</h3>
+                    <ul contenteditable="true" id="project-bullets-1" class="list-disc list-outside space-y-2 text-gray-700 text-lg pl-6">
+                        <li>Developed a fully functional online shopping platform with user authentication, product management, and secure payment integration.</li>
+                    </ul>
+                    <button class="mt-2 text-sm text-blue-500 hover:text-blue-700 font-semibold" onclick="generateBulletPointsWithAI('project-bullets-1')">
+                        Generate Bullet Points with AI
                     </button>
-                    <!-- Loading indicator -->
-                    <div id="loading-indicator-summary" class="hidden mt-2 text-center text-gray-500">
+                    <div id="loading-indicator-project-1" class="hidden mt-1 text-xs text-gray-500">
                         Generating...
                     </div>
                 </div>
 
-                <!-- Generated Summary Options -->
-                <div id="summary-options-container" class="space-y-4">
-                    <!-- Options will be dynamically inserted here -->
-                </div>
-
-                <!-- Skills Section -->
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Skills</h2>
-                    <ul contenteditable="true" class="list-disc list-inside space-y-2 text-gray-700 text-lg">
-                        <li>Skill 1 (e.g., Project Management)</li>
-                        <li>Skill 2 (e.g., JavaScript, Python)</li>
-                        <li>Skill 3 (e.g., Data Analysis)</li>
-                        <li>Skill 4 (e.g., Communication, Leadership)</li>
+                <!-- Project 2 -->
+                <div class="mb-6">
+                    <h3 contenteditable="true" class="text-xl font-bold text-gray-800">Automatic Streetlight System (IoT)</h3>
+                    <ul contenteditable="true" id="project-bullets-2" class="list-disc list-outside space-y-2 text-gray-700 text-lg pl-6">
+                        <li>Designed a smart streetlight system that automatically turns on/off based on ambient light and movement detection, optimizing energy usage.</li>
                     </ul>
+                    <button class="mt-2 text-sm text-blue-500 hover:text-blue-700 font-semibold" onclick="generateBulletPointsWithAI('project-bullets-2')">
+                        Generate Bullet Points with AI
+                    </button>
+                    <div id="loading-indicator-project-2" class="hidden mt-1 text-xs text-gray-500">
+                        Generating...
+                    </div>
                 </div>
-            </div>
-
-            <!-- Column 2: Education and Experience -->
-            <div class="md:col-span-2 space-y-8">
                 
-                <!-- Work Experience Section -->
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Work Experience</h2>
-                    
-                    <!-- Job 1 -->
-                    <div class="mb-6">
-                        <div class="flex justify-between items-start mb-1">
-                            <h3 contenteditable="true" class="text-xl font-bold text-gray-800">Job Title, Company</h3>
-                            <span contenteditable="true" class="text-gray-600 text-base">Start Date – End Date</span>
-                        </div>
-                        <p contenteditable="true" class="text-gray-700 italic mb-2">City, State</p>
-                        <ul contenteditable="true" id="job-bullets-1" class="list-disc list-outside space-y-2 text-gray-700 text-lg pl-6">
-                            <li>Accomplishment 1: Describe a key achievement or responsibility using action verbs.</li>
-                            <li>Accomplishment 2: Quantify your results whenever possible (e.g., "Increased sales by 15%").</li>
-                            <li>Accomplishment 3: Detail your contributions to team projects or company goals.</li>
-                        </ul>
-                        <button class="mt-2 text-sm text-blue-500 hover:text-blue-700 font-semibold" onclick="generateBulletPointsWithAI('job-bullets-1')">
-                            Generate Bullet Points with AI
-                        </button>
-                        <div id="loading-indicator-job-1" class="hidden mt-1 text-xs text-gray-500">
-                            Generating...
-                        </div>
+                <!-- Project 3 -->
+                <div class="mb-6">
+                    <h3 contenteditable="true" class="text-xl font-bold text-gray-800">Movie Ticket Booking App (MERN Stack)</h3>
+                    <ul contenteditable="true" id="project-bullets-3" class="list-disc list-outside space-y-2 text-gray-700 text-lg pl-6">
+                        <li>Currently developing during internship; enables users to browse movies, select seats, and book tickets with integrated payment gateway.</li>
+                    </ul>
+                    <button class="mt-2 text-sm text-blue-500 hover:text-blue-700 font-semibold" onclick="generateBulletPointsWithAI('project-bullets-3')">
+                        Generate Bullet Points with AI
+                    </button>
+                    <div id="loading-indicator-project-3" class="hidden mt-1 text-xs text-gray-500">
+                        Generating...
                     </div>
-
-                    <!-- Job 2 -->
-                    <div class="mb-6">
-                        <div class="flex justify-between items-start mb-1">
-                            <h3 contenteditable="true" class="text-xl font-bold text-gray-800">Job Title, Company</h3>
-                            <span contenteditable="true" class="text-gray-600 text-base">Start Date – End Date</span>
-                        </div>
-                        <p contenteditable="true" class="text-gray-700 italic mb-2">City, State</p>
-                        <ul contenteditable="true" id="job-bullets-2" class="list-disc list-outside space-y-2 text-gray-700 text-lg pl-6">
-                            <li>Accomplishment 1: Describe a key achievement or responsibility using action verbs.</li>
-                            <li>Accomplishment 2: Quantify your results whenever possible (e.g., "Increased sales by 15%").</li>
-                            <li>Accomplishment 3: Detail your contributions to team projects or company goals.</li>
-                        </ul>
-                        <button class="mt-2 text-sm text-blue-500 hover:text-blue-700 font-semibold" onclick="generateBulletPointsWithAI('job-bullets-2')">
-                            Generate Bullet Points with AI
-                        </button>
-                        <div id="loading-indicator-job-2" class="hidden mt-1 text-xs text-gray-500">
-                            Generating...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Education Section -->
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Education</h2>
-                    <div class="flex justify-between items-start mb-1">
-                        <h3 contenteditable="true" class="text-xl font-bold text-gray-800">Degree, Major</h3>
-                        <span contenteditable="true" class="text-gray-600 text-base">Graduation Date</span>
-                    </div>
-                    <p contenteditable="true" class="text-gray-700 italic">University Name, City, State</p>
-                    <p contenteditable="true" class="text-gray-700 text-lg">Relevant coursework or honors (optional).</p>
                 </div>
             </div>
+
+            <!-- Certifications -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Certifications</h2>
+                <ul contenteditable="true" class="list-disc list-inside space-y-2 text-gray-700 text-lg">
+                    <li>AI and Cloud Computing Training — 5-day program by IBM in collaboration with Edunet Foundation.</li>
+                </ul>
+            </div>
+
+            <!-- Extra-Curricular Activities -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Extra-Curricular Activities</h2>
+                <ul contenteditable="true" class="list-disc list-inside space-y-2 text-gray-700 text-lg">
+                    <li>Served as Vice President in student council at Shri Ram Murti Smarak College of Engineering and Technology.</li>
+                    <li>Participated in college fests and technical events.</li>
+                    <li>Actively engaged in sports and athletic competitions.</li>
+                    <li>Volunteered in college workshops and seminars.</li>
+                </ul>
+            </div>
+
+            <!-- Hobbies & Interests -->
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Hobbies & Interests</h2>
+                <ul contenteditable="true" class="list-disc list-inside space-y-2 text-gray-700 text-lg">
+                    <li>Calisthenics and Athletics</li>
+                    <li>Painting</li>
+                    <li>Studying Psychology</li>
+                </ul>
+            </div>
+
         </main>
         
         <!-- Action Button for Saving -->
@@ -172,7 +192,6 @@
     <!-- JavaScript to handle the "Save as PDF" and AI functionality -->
     <script>
         document.getElementById('printBtn').addEventListener('click', () => {
-            // This triggers the browser's print dialog, which can save the page as a PDF
             window.print();
         });
 
@@ -184,7 +203,7 @@
                 profilePictureElement.src = newImageUrl;
                 profilePictureElement.onerror = () => {
                     showMessage('Invalid image URL. Reverting to placeholder.', 'error');
-                    profilePictureElement.src = "https://placehold.co/120x120/A0A0A0/FFFFFF?text=Photo";
+                    profilePictureElement.src = "https://placehold.co/150x150/A0A0A0/FFFFFF?text=Photo";
                 };
                 showMessage('Profile picture updated successfully!', 'success');
             }
@@ -214,20 +233,15 @@
 
         // Event listener for the AI summary button
         generateSummaryBtn.addEventListener('click', async () => {
-            // Prompt the user for a description of their experience
             const experience = prompt("Please describe your work experience and key skills in a few sentences to generate summary options:");
 
-            // Check if the user provided input
             if (experience && experience.trim() !== '') {
-                // Show loading indicator and disable the button
                 loadingIndicatorSummary.classList.remove('hidden');
                 generateSummaryBtn.disabled = true;
 
-                // Construct a prompt for the AI to generate a JSON array of summaries
                 const prompt = `Based on the following experience, write 3 distinct professional summaries for a resume. Each summary should be a concise paragraph (2-3 sentences), use strong action verbs, and highlight key achievements and skills. The tone for each should be slightly different (e.g., one focusing on leadership, one on technical skills, one on problem-solving). Do not use a specific name, use the placeholder "Your Name". Return the response as a JSON array of strings, where each string is a summary.`;
 
                 try {
-                    // Use a retry mechanism with exponential backoff for the API call
                     let response;
                     let result;
                     let retries = 0;
@@ -270,12 +284,9 @@
                         const jsonString = result.candidates[0].content.parts[0].text;
                         const summaries = JSON.parse(jsonString);
 
-                        // Clear previous options
                         summaryOptionsContainer.innerHTML = '';
-                        // Add a message to the user
                         summaryOptionsContainer.innerHTML = '<p class="text-gray-500 text-sm italic mb-2">Choose and edit one of the following summaries:</p>';
 
-                        // Create and append a div for each generated summary
                         summaries.forEach((summary) => {
                             const summaryDiv = document.createElement('div');
                             summaryDiv.classList.add('p-4', 'bg-gray-100', 'rounded-lg', 'shadow-sm', 'border', 'border-gray-200', 'hover:bg-gray-200', 'cursor-pointer', 'transition-colors', 'duration-200');
@@ -283,7 +294,6 @@
                             summaryDiv.innerText = summary.trim();
                             summaryOptionsContainer.appendChild(summaryDiv);
 
-                            // Add a click event listener to select the summary and put it in the main area
                             summaryDiv.addEventListener('click', () => {
                                 summaryText.innerText = summaryDiv.innerText;
                                 showMessage('Summary updated successfully!', 'success');
@@ -295,10 +305,8 @@
                     }
                 } catch (error) {
                     console.error('Error fetching from Gemini API:', error);
-                    // Display a user-friendly error message
                     showMessage("An error occurred. Please check your network connection and try again.");
                 } finally {
-                    // Hide loading indicator and re-enable the button
                     loadingIndicatorSummary.classList.add('hidden');
                     generateSummaryBtn.disabled = false;
                 }
